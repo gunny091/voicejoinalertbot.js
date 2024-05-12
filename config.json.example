@@ -8,5 +8,13 @@
       "alert": "id",
       "message": "{username}, {channel}, {everyone}"
     }
+  },
+  "dday": {
+    "channel": "id",
+    "hour": 6,
+    "minute": 0,
+    "includeFirstDay": true,
+    "message": "{dday}",
+    "startDate": "2023-12-04 0:00:00"
   }
 }

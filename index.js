@@ -30,8 +30,31 @@ function replaceAll(str, filter) {
   return newStr;
 }
 
+async function checkDDay() {
+  const date = new Date();
+  if (
+    date.getHours() == config.dday.hour &&
+    date.getMinutes() == config.dday.minute
+  ) {
+    const channel = await findChannel(config.dday.channel);
+    if (channel) {
+      const today = new Date();
+      const DDay = new Date(config.dday.startDate);
+      const timeGap = today.getTime() - DDay.getTime();
+      const result =
+        Math.floor(timeGap / (1000 * 60 * 60 * 24)) +
+        (config.dday.includeFirstDay ? 1 : 0);
+
+      const filter = new Collection();
+      filter.set("{dday}", String(result));
+      channel.send(replaceAll(config.dday.message, filter));
+    }
+  }
+}
+
 client.once(Events.ClientReady, (readyClient) => {
   console.log(`Ready! Logged in as ${readyClient.user.tag}`);
+  if (config.dday) setInterval(checkDDay, 60 * 1000);
 });
 
 client.on(Events.VoiceStateUpdate, async (oldState, newState) => {
