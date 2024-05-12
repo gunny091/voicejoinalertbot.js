@@ -1,0 +1,12 @@
+{
+  "token": "token",
+  "guilds": {
+    "id": {
+      "targets": [
+        "id"
+      ],
+      "alert": "id",
+      "message": "{username}, {channel}, {everyone}"
+    }
+  }
+}
