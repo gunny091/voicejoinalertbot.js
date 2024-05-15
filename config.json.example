@@ -1,13 +1,11 @@
 {
   "token": "token",
-  "guilds": {
-    "id": {
-      "targets": [
-        "id"
-      ],
-      "alert": "id",
-      "message": "{username}, {channel}, {everyone}"
-    }
+  "voicealert": {
+    "targets": [
+      "id"
+    ],
+    "alert": "id",
+    "message": "{username}, {channel}, {everyone}"
   },
   "dday": {
     "channel": "id",
@@ -15,6 +13,7 @@
     "minute": 0,
     "includeFirstDay": true,
     "message": "{dday}",
-    "startDate": "2023-12-04 0:00:00"
+    "startDate": "2023-12-04 0:00:00",
+    "react": "emoji"
   }
 }
