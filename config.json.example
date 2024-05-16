@@ -1,5 +1,6 @@
 {
   "token": "token",
+  "clientId": "client id",
   "voicealert": {
     "targets": [
       "id"
