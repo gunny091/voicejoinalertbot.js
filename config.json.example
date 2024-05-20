@@ -6,7 +6,7 @@
       "id"
     ],
     "alert": "id",
-    "message": "{username}, {channel}, {everyone}"
+    "message": "{username}, {usermention}, {channel}, {everyone}"
   },
   "dday": {
     "channel": "id",

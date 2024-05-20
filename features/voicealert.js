@@ -10,6 +10,7 @@ export default function install(client) {
   client.on(Events.VoiceStateUpdate, async (oldState, newState) => {
     try {
       if (!newState.channel) return;
+      if (oldState.channel) return;
       if (oldState.channelId == newState.channelId) return;
 
       if (!config.targets.includes(newState.channelId)) return;
@@ -23,6 +24,7 @@ export default function install(client) {
 
       const filter = new Collection();
       filter.set("{username}", user.displayName);
+      filter.set("{usermention}", user.toString());
       filter.set("{channel}", channel.toString());
       filter.set("{everyone}", "@everyone");
 
