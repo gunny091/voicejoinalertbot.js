@@ -25,6 +25,8 @@ const client = new Client({
 
 client.commands = new Collection();
 
+client.data = {};
+
 // (async () => {
 const commandsPath = path.join(__dirname, "commands");
 const commandFiles = fs

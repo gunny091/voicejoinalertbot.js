@@ -6,14 +6,23 @@ export default {
     .setName("killall")
     .setDescription("보이스에 있는사람 다 뒤지는거야")
     .addIntegerOption((option) =>
-      option
-        .setName("wait")
-        .setDescription("분으로 입력하세요")
-        .setMinValue(0)
-        .setMaxValue(300)
-    ),
+      option.setName("wait").setDescription("분으로 입력하세요").setMinValue(0).setMaxValue(300)
+    )
+    .addBooleanOption((option) => option.setName("cancel").setDescription("True: 취소")),
   async execute(interaction) {
+    const cancel = interaction.options.getBoolean("cancel", false);
+    if (cancel) {
+      if (interaction.client.data.killallRunningPid && interaction.client.data.killallRunningPid != -1) {
+        interaction.client.data.killallRunningPid = -1;
+        await interaction.reply("취소됨");
+      } else {
+        await interaction.reply("취소할게 없어요");
+      }
+      return;
+    }
+
     const minutes = interaction.options.getInteger("wait", false);
+
     if (minutes == 0 || minutes == null) {
       if (interaction.member.voice.channel) {
         for (const member of interaction.member.voice.channel.members.values()) {
@@ -25,15 +34,28 @@ export default {
       }
     } else {
       interaction.reply(`${minutes}분만 ㄱㄷ`);
+
+      const pid = new Date().getTime();
+      interaction.client.data.killallRunningPid = pid;
+
       await sleep(minutes * 60 * 1000);
-      if (interaction.member.voice.channel) {
-        for (const member of interaction.member.voice.channel.members.values()) {
-          await member.voice.disconnect();
+
+      let message = `(${interaction.member.displayName}:${minutes}분 전) `;
+
+      if (pid == interaction.client.data.killallRunningPid) {
+        if (interaction.member.voice.channel) {
+          for (const member of interaction.member.voice.channel.members.values()) {
+            await member.voice.disconnect();
+          }
+          message += "처리 완료";
+        } else {
+          message += "통방에 있어야 ㄱㄴ";
         }
-        await interaction.channel.send("처리 완료");
       } else {
-        await interaction.channel.send("통방에 있어야 ㄱㄴ");
+        message += "취소되거나 덮여쓰여짐";
       }
+      interaction.client.data.killallRunningPid = -1;
+      await interaction.channel.send(message);
     }
   },
 };
