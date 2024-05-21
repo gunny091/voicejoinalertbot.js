@@ -29,9 +29,7 @@ client.data = {};
 
 // (async () => {
 const commandsPath = path.join(__dirname, "commands");
-const commandFiles = fs
-  .readdirSync(commandsPath)
-  .filter((file) => file.endsWith(".js"));
+const commandFiles = fs.readdirSync(commandsPath).filter((file) => file.endsWith(".js"));
 for (const file of commandFiles) {
   const filePath = path.join(commandsPath, file);
   try {
@@ -57,6 +55,9 @@ client.on(Events.InteractionCreate, async (interaction) => {
     await command.execute(interaction);
   } catch (error) {
     console.error(error);
+    if (new Date().getTime() - interaction.createdAt.getTime() > 15 * 60 * 1000) {
+      return;
+    }
     if (interaction.replied || interaction.deferred) {
       await interaction.followUp({
         content: "There was an error while executing this command!",
