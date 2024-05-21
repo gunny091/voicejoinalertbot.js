@@ -1,5 +1,6 @@
 import fs from "fs";
 
+// JSON 편하게 불러오고 저장
 export class JSONManager {
   constructor(filename) {
     this.filename = filename;
