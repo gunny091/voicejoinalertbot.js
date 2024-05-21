@@ -46,7 +46,7 @@ export default {
 
       await sleep(minutes * 60 * 1000);
 
-      let message = `(${interaction.member.displayName}:${minutes}분 전) `;
+      let message = `(${interaction.member.displayName}:${interaction.toString()}) `;
 
       // 취소아님
       if (pid == interaction.client.data.killallRunningPid) {
