@@ -1,4 +1,4 @@
-import { SlashCommandBuilder } from "discord.js";
+import { SlashCommandBuilder, SlashCommandSubcommandBuilder } from "discord.js";
 import { sleep } from "../modules/sleep.js";
 
 export default {
@@ -6,28 +6,19 @@ export default {
   data: new SlashCommandBuilder()
     .setName("killall")
     .setDescription("보이스에 있는사람 다 뒤지는거야")
-    .addIntegerOption((option) =>
-      option.setName("wait").setDescription("분으로 입력하세요").setMinValue(0).setMaxValue(300)
-    )
-    .addBooleanOption((option) => option.setName("cancel").setDescription("True: 취소")),
+    .addSubcommand((subcommand) => subcommand.setName("rightnow").setDescription("지금당장"))
+    .addSubcommand((subcommand) => subcommand.setName("cancel").setDescription("취소"))
+    .addSubcommand((subcommand) =>
+      subcommand
+        .setName("wait")
+        .setDescription("기다리기")
+        .addIntegerOption((option) =>
+          option.setName("minutes").setDescription("분 단위로 입력").setMinValue(1).setMaxValue(300).setRequired(true)
+        )
+    ),
   async execute(interaction) {
-    // 취소
-    const cancel = interaction.options.getBoolean("cancel", false);
-    if (cancel) {
-      if (interaction.client.data.killallRunningPid && interaction.client.data.killallRunningPid != -1) {
-        interaction.client.data.killallRunningPid = -1;
-        await interaction.reply("취소됨");
-      } else {
-        await interaction.reply("취소할게 없어요");
-      }
-      return;
-    }
-
-    // 지연 실행
-    const minutes = interaction.options.getInteger("wait", false);
-
     // 즉시 실행
-    if (minutes == 0 || minutes == null) {
+    if (interaction.options.getSubcommand() === "rightnow") {
       if (interaction.member.voice.channel) {
         for (const member of interaction.member.voice.channel.members.values()) {
           await member.voice.disconnect();
@@ -36,9 +27,13 @@ export default {
       } else {
         await interaction.reply("통방에 있어야 ㄱㄴ");
       }
+      interaction.client.data.killallRunningPid = -1;
     }
+
     // 지연 실행
-    else {
+    if (interaction.options.getSubcommand() === "wait") {
+      const minutes = interaction.options.getInteger("minutes", true);
+
       interaction.reply(`${minutes}분만 ㄱㄷ`);
 
       const pid = new Date().getTime();
@@ -55,19 +50,21 @@ export default {
           for (const member of interaction.member.voice.channel.members.values()) {
             await member.voice.disconnect();
           }
-          message += "처리 완료";
+          await interaction.channel.send(`${interaction.member.displayName} 늦게 처리 완료`);
         }
-        // 아무도 없을 때
-        else {
-          message += "통방에 있어야 ㄱㄴ";
-        }
-      }
-      // 취소
-      else {
-        message += "취소되거나 덮여쓰여짐";
       }
       interaction.client.data.killallRunningPid = -1;
-      await interaction.channel.send(message);
+    }
+
+    // 취소
+    if (interaction.options.getSubcommand() === "cancel") {
+      if (interaction.client.data.killallRunningPid && interaction.client.data.killallRunningPid != -1) {
+        interaction.client.data.killallRunningPid = -1;
+        await interaction.reply("취소.");
+      } else {
+        await interaction.reply("취소할게 없어요;");
+      }
+      return;
     }
   },
 };

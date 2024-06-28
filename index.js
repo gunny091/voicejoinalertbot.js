@@ -39,10 +39,11 @@ for (const file of commandFiles) {
   const filePath = path.join(commandsPath, file);
   try {
     // 명령어 리스트에 추가하기
-    const { default: command } = await import("file:///" + filePath);
+    const { default: command } = await import(/*"file:///" + */ filePath);
     client.commands.set(command.data.name, command);
   } catch (err) {
-    throw err;
+    // throw err;
+    console.error(err);
   }
 }
 
