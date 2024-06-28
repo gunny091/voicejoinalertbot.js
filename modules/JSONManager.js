@@ -12,7 +12,7 @@ export class JSONManager {
       const jsonData = JSON.parse(data);
       return jsonData;
     } catch (err) {
-      throw err;
+      console.error(err);
     }
   }
 
@@ -21,7 +21,17 @@ export class JSONManager {
       const jsonString = JSON.stringify(jsonData, null, 2);
       fs.writeFileSync(this.filename, jsonString, "utf8");
     } catch (err) {
-      throw err;
+      console.error(err);
+    }
+  }
+
+  check() {
+    try {
+      if (!fs.existsSync(this.filename)) {
+        fs.writeFileSync(this.filename, JSON.stringify({}, null, 2), "utf8");
+      }
+    } catch (err) {
+      console.error(err);
     }
   }
 }

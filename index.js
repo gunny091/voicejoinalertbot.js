@@ -13,10 +13,6 @@ import { JSONManager } from "./modules/JSONManager.js";
 
 const config = new JSONManager("./config.json").get();
 
-// 기능들 불러오기
-import dday from "./features/dday.js";
-import voicealert from "./features/voicealert.js";
-
 const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
@@ -39,10 +35,9 @@ for (const file of commandFiles) {
   const filePath = path.join(commandsPath, file);
   try {
     // 명령어 리스트에 추가하기
-    const { default: command } = await import(/*"file:///" + */ filePath);
+    const { default: command } = await import(filePath);
     client.commands.set(command.data.name, command);
   } catch (err) {
-    // throw err;
     console.error(err);
   }
 }
@@ -62,7 +57,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
 
   try {
     // 명령어 실행
-    await command.execute(interaction);
+    await command.execute(interaction, client);
   } catch (error) {
     // 오류가 발생했을 때
     console.error(error);
@@ -93,8 +88,18 @@ client.once(Events.ClientReady, (readyClient) => {
 });
 
 // 기능 적용
-dday(client);
-voicealert(client);
+const featuresPath = path.join(__dirname, "features");
+const featureFiles = fs.readdirSync(featuresPath).filter((file) => file.endsWith(".js"));
+for (const file of featureFiles) {
+  const filePath = path.join(featuresPath, file);
+  try {
+    // 적용하기
+    const { default: feature } = await import(filePath);
+    feature(client);
+  } catch (err) {
+    console.error(err);
+  }
+}
 
 // 로그인
 client.login(config.token);

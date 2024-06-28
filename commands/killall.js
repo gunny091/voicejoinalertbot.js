@@ -1,4 +1,4 @@
-import { SlashCommandBuilder, SlashCommandSubcommandBuilder } from "discord.js";
+import { SlashCommandBuilder } from "discord.js";
 import { sleep } from "../modules/sleep.js";
 
 export default {
@@ -16,35 +16,36 @@ export default {
           option.setName("minutes").setDescription("분 단위로 입력").setMinValue(1).setMaxValue(300).setRequired(true)
         )
     ),
-  async execute(interaction) {
+  async execute(interaction, client) {
+    const subcmd = interaction.options.getSubcommand();
     // 즉시 실행
-    if (interaction.options.getSubcommand() === "rightnow") {
+    if (subcmd === "rightnow") {
       if (interaction.member.voice.channel) {
         for (const member of interaction.member.voice.channel.members.values()) {
           await member.voice.disconnect();
         }
         await interaction.reply("처리 완료");
       } else {
-        await interaction.reply("통방에 있어야 ㄱㄴ");
+        await interaction.reply({ content: "통방에 있어야 ㄱㄴ", ephemeral: true });
       }
-      interaction.client.data.killallRunningPid = -1;
+      client.data.killallRunningPid = -1;
     }
 
     // 지연 실행
-    if (interaction.options.getSubcommand() === "wait") {
+    if (subcmd === "wait") {
       const minutes = interaction.options.getInteger("minutes", true);
 
-      interaction.reply(`${minutes}분만 ㄱㄷ`);
+      await interaction.reply(`${minutes}분만 ㄱㄷ`);
 
       const pid = new Date().getTime();
-      interaction.client.data.killallRunningPid = pid;
+      client.data.killallRunningPid = pid;
 
       await sleep(minutes * 60 * 1000);
 
       let message = `(${interaction.member.displayName}:${interaction.toString()}) `;
 
       // 취소아님
-      if (pid == interaction.client.data.killallRunningPid) {
+      if (pid == client.data.killallRunningPid) {
         if (interaction.member.voice.channel) {
           // 다 연결 끊기
           for (const member of interaction.member.voice.channel.members.values()) {
@@ -53,13 +54,13 @@ export default {
           await interaction.channel.send(`${interaction.member.displayName} 늦게 처리 완료`);
         }
       }
-      interaction.client.data.killallRunningPid = -1;
+      client.data.killallRunningPid = -1;
     }
 
     // 취소
-    if (interaction.options.getSubcommand() === "cancel") {
-      if (interaction.client.data.killallRunningPid && interaction.client.data.killallRunningPid != -1) {
-        interaction.client.data.killallRunningPid = -1;
+    if (subcmd === "cancel") {
+      if (client.data.killallRunningPid && client.data.killallRunningPid != -1) {
+        client.data.killallRunningPid = -1;
         await interaction.reply("취소.");
       } else {
         await interaction.reply("취소할게 없어요;");
