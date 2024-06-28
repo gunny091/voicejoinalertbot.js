@@ -38,7 +38,7 @@ export default {
       const datetime = new Date(interaction.options.getString("datetime"));
       // 시간이 아닐 때
       if (isNaN(datetime.getTime())) {
-        await interaction.reply({ content: "그....저기.....시간이.....이상해", ephemeral: true });
+        await interaction.reply({ content: "그....저기.....시간이.....이상해\nex) 2024/1/1 1:23:45", ephemeral: true });
         return;
       }
       // 시간이 겹칠 때
