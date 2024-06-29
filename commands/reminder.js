@@ -17,12 +17,14 @@ export default {
         .addChannelOption((option) =>
           option.setName("channel").setDescription("보낼 채널").setRequired(true).addChannelTypes(ChannelType.GuildText)
         )
-        .addStringOption((option) => option.setName("message").setDescription("뭐보내줄까").setRequired(true))
+        .addStringOption((option) => option.setName("message").setDescription("뭐보내줄까").setRequired(true).setMinLength(1))
         .addStringOption((option) =>
           option.setName("datetime").setDescription("언제? ex) 2024/1/1 1:23:45").setRequired(true)
         )
     )
+    // list
     .addSubcommand((subcommand) => subcommand.setName("list").setDescription("목록"))
+    // remove: timecode
     .addSubcommand((subcommand) =>
       subcommand
         .setName("remove")
@@ -68,7 +70,7 @@ export default {
       if (!text) {
         text = "리마인더 없음";
       } else {
-        text = "# 리마인더" + text;
+        text = "### 리마인더" + text;
       }
       // 나한테만 보기로 응답
       await interaction.reply({

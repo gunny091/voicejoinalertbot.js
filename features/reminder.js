@@ -10,9 +10,9 @@ function check(client) {
     .filter((v, k) => k < new Date().getTime())
     .each(async (v, k) => {
       // 채널 찾기
-      const channel = findChannel(v.channel);
+      const channel = await findChannel(client, v.channel);
       // 리마인더 보내기
-      if (channel) await channel.send(`<@${v.member}> 리마인더: "${v.message}"`);
+      if (channel) await channel.send(`${v.member} 리마인더\n> `);
       // 컬렉션에서 지우기
       client.data.reminders.delete(k);
     });
