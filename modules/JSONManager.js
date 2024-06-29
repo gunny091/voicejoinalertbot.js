@@ -1,7 +1,7 @@
-import fs from "fs";
+const fs = require("fs");
 
 // JSON 편하게 불러오고 저장
-export class JSONManager {
+class JSONManager {
   constructor(filename) {
     this.filename = filename;
   }
@@ -35,3 +35,4 @@ export class JSONManager {
     }
   }
 }
+exports.JSONManager = JSONManager;

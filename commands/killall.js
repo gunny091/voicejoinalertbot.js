@@ -1,7 +1,7 @@
-import { SlashCommandBuilder } from "discord.js";
-import { sleep } from "../modules/sleep.js";
+const { SlashCommandBuilder } = require("discord.js");
+const { sleep } = require("../modules/sleep");
 
-export default {
+module.exports = {
   // 명령어 설정
   data: new SlashCommandBuilder()
     .setName("killall")
@@ -13,7 +13,12 @@ export default {
         .setName("wait")
         .setDescription("기다리기")
         .addIntegerOption((option) =>
-          option.setName("minutes").setDescription("분 단위로 입력").setMinValue(1).setMaxValue(300).setRequired(true)
+          option
+            .setName("minutes")
+            .setDescription("분 단위로 입력")
+            .setMinValue(1)
+            .setMaxValue(300)
+            .setRequired(true)
         )
     ),
   async execute(interaction, client) {

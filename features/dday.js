@@ -1,8 +1,8 @@
-import { Events, Collection } from "discord.js";
+const { Events, Collection } = require("discord.js");
 
-import { findChannel } from "../modules/findChannel.js";
-import { replaceAll } from "../modules/replaceAll.js";
-import { JSONManager } from "../modules/JSONManager.js";
+const { findChannel } = require("../modules/findChannel.js");
+const { replaceAll } = require("../modules/replaceAll.js");
+const { JSONManager } = require("../modules/JSONManager.js");
 
 const config = new JSONManager("./config.json").get();
 
@@ -38,11 +38,11 @@ async function checkDDay(client) {
   }
 }
 // 1분마다 실행
-export default function install(client) {
+exports.install = function (client) {
   client.once(Events.ClientReady, () => {
     if (config.dday) {
       checkDDay(client);
       setInterval(() => checkDDay(client), 60 * 1000);
     }
   });
-}
+};

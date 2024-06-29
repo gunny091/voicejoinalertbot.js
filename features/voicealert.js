@@ -1,12 +1,12 @@
-import { Events, Collection } from "discord.js";
+const { Events, Collection } = require("discord.js");
 
-import { replaceAll } from "../modules/replaceAll.js";
-import { findChannel } from "../modules/findChannel.js";
-import { JSONManager } from "../modules/JSONManager.js";
+const { replaceAll } = require("../modules/replaceAll.js");
+const { findChannel } = require("../modules/findChannel.js");
+const { JSONManager } = require("../modules/JSONManager.js");
 
 const config = new JSONManager("./config.json").get().voicealert;
 
-export default function install(client) {
+exports.install = function (client) {
   client.on(Events.VoiceStateUpdate, async (oldState, newState) => {
     try {
       // 음성 채널에 접속했을 때 채널의 총 인원이 1명일 때만 실행
@@ -37,4 +37,4 @@ export default function install(client) {
       console.error(e);
     }
   });
-}
+};

@@ -1,15 +1,10 @@
-import fs from "node:fs";
-import path from "node:path";
-import { fileURLToPath } from "url";
+const fs = require("fs");
+const path = require("path");
 
-// ES에서 __dirname 사용
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-import { Client, Collection, Events, GatewayIntentBits } from "discord.js";
+const { Client, Collection, Events, GatewayIntentBits } = require("discord.js");
 
 // 설정을 불러오기 위한 JSON Manager
-import { JSONManager } from "./modules/JSONManager.js";
+const { JSONManager } = require("./modules/JSONManager");
 
 const config = new JSONManager("./config.json").get();
 
@@ -35,7 +30,7 @@ for (const file of commandFiles) {
   const filePath = path.join(commandsPath, file);
   try {
     // 명령어 리스트에 추가하기
-    const { default: command } = await import(filePath);
+    const command = require(filePath);
     client.commands.set(command.data.name, command);
   } catch (err) {
     console.error(err);
@@ -94,8 +89,8 @@ for (const file of featureFiles) {
   const filePath = path.join(featuresPath, file);
   try {
     // 적용하기
-    const { default: feature } = await import(filePath);
-    feature(client);
+    const { install } = require(filePath);
+    install(client);
   } catch (err) {
     console.error(err);
   }

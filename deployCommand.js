@@ -1,13 +1,9 @@
-import fs from "node:fs";
-import path from "node:path";
-import { fileURLToPath } from "url";
+const fs = require("fs");
+const path = require("path");
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const { REST, Routes } = require("discord.js");
 
-import { REST, Routes } from "discord.js";
-
-import { JSONManager } from "./modules/JSONManager.js";
+const { JSONManager } = require("./modules/JSONManager.js");
 
 const { token, clientId } = new JSONManager("./config.json").get();
 
@@ -21,7 +17,7 @@ const { token, clientId } = new JSONManager("./config.json").get();
   for (const file of commandFiles) {
     const filePath = path.join(commandsPath, file);
     try {
-      const { default: command } = await import("file:///" + filePath);
+      const command = require("file:///" + filePath);
       commands.push(command.data.toJSON());
     } catch (err) {
       console.error(err);

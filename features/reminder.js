@@ -1,6 +1,6 @@
-import { Collection, Events } from "discord.js";
-import { findChannel } from "../modules/findChannel.js";
-import { JSONManager } from "../modules/JSONManager.js";
+const { Collection, Events } = require("discord.js");
+const { findChannel } = require("../modules/findChannel.js");
+const { JSONManager } = require("../modules/JSONManager.js");
 
 const reminderJSON = new JSONManager("./reminder.json");
 
@@ -12,7 +12,7 @@ function check(client) {
       // 채널 찾기
       const channel = await findChannel(client, v.channel);
       // 리마인더 보내기
-      if (channel) await channel.send(`${v.member} 리마인더\n> `);
+      if (channel) await channel.send(`${v.member} 리마인더\n> ${v.message}`);
       // 컬렉션에서 지우기
       client.data.reminders.delete(k);
     });
@@ -21,7 +21,7 @@ function check(client) {
   reminderJSON.set(Object.fromEntries(client.data.reminders));
 }
 
-export default function install(client) {
+exports.install = function (client) {
   client.once(Events.ClientReady, () => {
     // 리마인더 불러오기
     reminderJSON.check();
@@ -43,4 +43,4 @@ export default function install(client) {
     // 함수 보내기
     client.data.reminderCheck = check;
   });
-}
+};

@@ -1,10 +1,12 @@
-import { ChannelType, SlashCommandBuilder } from "discord.js";
+const { ChannelType, SlashCommandBuilder } = require("discord.js");
 
 function reminderToString(v, k) {
-  return `(${k}) ${new Date(k).toLocaleString()} | ${v.memberDisplayName}:<#${v.channel}> | \`${v.message}\``;
+  return `(${k}) ${new Date(k).toLocaleString()} | ${v.memberDisplayName}:<#${v.channel}> | \`${
+    v.message
+  }\``;
 }
 
-export default {
+module.exports = {
   // 명령어 설정
   data: new SlashCommandBuilder()
     .setName("reminder")
@@ -15,9 +17,15 @@ export default {
         .setName("add")
         .setDescription("추가")
         .addChannelOption((option) =>
-          option.setName("channel").setDescription("보낼 채널").setRequired(true).addChannelTypes(ChannelType.GuildText)
+          option
+            .setName("channel")
+            .setDescription("보낼 채널")
+            .setRequired(true)
+            .addChannelTypes(ChannelType.GuildText)
         )
-        .addStringOption((option) => option.setName("message").setDescription("뭐보내줄까").setRequired(true).setMinLength(1))
+        .addStringOption((option) =>
+          option.setName("message").setDescription("뭐보내줄까").setRequired(true).setMinLength(1)
+        )
         .addStringOption((option) =>
           option.setName("datetime").setDescription("언제? ex) 2024/1/1 1:23:45").setRequired(true)
         )
@@ -30,7 +38,11 @@ export default {
         .setName("remove")
         .setDescription("삭제")
         .addIntegerOption((option) =>
-          option.setName("timecode").setDescription("모르겠으면 리스트 봐").setMinValue(0).setRequired(true)
+          option
+            .setName("timecode")
+            .setDescription("모르겠으면 리스트 봐")
+            .setMinValue(0)
+            .setRequired(true)
         )
     ),
   async execute(interaction, client) {
@@ -40,12 +52,18 @@ export default {
       const datetime = new Date(interaction.options.getString("datetime"));
       // 시간이 아닐 때
       if (isNaN(datetime.getTime())) {
-        await interaction.reply({ content: "그....저기.....시간이.....이상해\nex) 2024/1/1 1:23:45", ephemeral: true });
+        await interaction.reply({
+          content: "그....저기.....시간이.....이상해\nex) 2024/1/1 1:23:45",
+          ephemeral: true,
+        });
         return;
       }
       // 시간이 겹칠 때
       if (client.data.reminders.has(datetime.getTime())) {
-        await interaction.reply({ content: "ㅈㅅ 시간이 겹침", ephemeral: true });
+        await interaction.reply({
+          content: "ㅈㅅ 시간이 겹침",
+          ephemeral: true,
+        });
         return;
       }
       // 컬렉션에 추가
