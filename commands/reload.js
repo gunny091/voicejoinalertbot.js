@@ -10,7 +10,7 @@ export default {
   data: new SlashCommandBuilder().setName("reload").setDescription("봇 리로드"),
 
   async execute(interaction, client) {
-    if (interaction.member.id === config.ownerId) {
+    if (config.ownerId.includes(interaction.member.id)) {
       await interaction.reply("봇 리로드");
       await sleep(100);
       process.exit();

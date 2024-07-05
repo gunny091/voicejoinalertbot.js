@@ -10,7 +10,7 @@ export default {
   data: new SlashCommandBuilder().setName("forcekill").setDescription("봇 종료"),
 
   async execute(interaction, client) {
-    if (interaction.member.id === config.ownerId) {
+    if (config.ownerId.includes(interaction.member.id)) {
       await interaction.reply("프로세스 종료");
       await sleep(100);
       process.exit(27);
