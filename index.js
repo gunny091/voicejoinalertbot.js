@@ -84,7 +84,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
 
 // 준비 완료
 client.once(Events.ClientReady, (readyClient) => {
-  console.log(`Ready! Logged in as ${readyClient.user.tag}`);
+  console.log(`준비완료 ${readyClient.user.tag}`);
 });
 
 // 기능 적용
