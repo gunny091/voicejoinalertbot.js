@@ -7,13 +7,13 @@ const config = new JSONManager("./config.json").get();
 
 export default {
   // 명령어 설정
-  data: new SlashCommandBuilder().setName("forcekill").setDescription("봇 종료"),
+  data: new SlashCommandBuilder().setName("reload").setDescription("봇 리로드"),
 
   async execute(interaction, client) {
     if (interaction.member.id === config.ownerId) {
-      await interaction.reply("프로세스 종료");
+      await interaction.reply("봇 리로드");
       await sleep(100);
-      process.exit(27);
+      process.exit();
     } else {
       await interaction.reply("넌 안돼");
     }
