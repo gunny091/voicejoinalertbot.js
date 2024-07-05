@@ -23,6 +23,7 @@ export default {
       });
     } else {
       client.user.setPresence({
+        activities: [{ name: " ", type: ActivityType.Custom }],
         status: interaction.options.getString("status"),
       });
     }
