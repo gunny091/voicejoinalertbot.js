@@ -1,0 +1,3 @@
+services:
+  vja:
+    image: vja:1
