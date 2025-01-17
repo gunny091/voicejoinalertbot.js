@@ -1,3 +1,5 @@
 services:
   vja:
     image: vja:1
+    build: .
+    restart: unless-stopped

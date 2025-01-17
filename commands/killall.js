@@ -1,6 +1,17 @@
 import { SlashCommandBuilder } from "discord.js";
 import { sleep } from "../modules/sleep.js";
 
+async function killall(channel) {
+  return (
+    await Promise.allSettled(Array.from(channel.members.values()).map((member) => member.voice.disconnect()))
+  ).every((result) => result.status === "fulfilled");
+}
+
+function lateLog({ startTime, minutes, displayName, message }) {
+  return `${startTime} +${minutes}m
+${displayName}: ${message}`;
+}
+
 export default {
   // 명령어 설정
   data: new SlashCommandBuilder()
@@ -21,10 +32,11 @@ export default {
     // 즉시 실행
     if (subcmd === "rightnow") {
       if (interaction.member.voice.channel) {
-        for (const member of interaction.member.voice.channel.members.values()) {
-          await member.voice.disconnect();
+        if (await killall(interaction.member.voice.channel)) {
+          await interaction.reply("처리 완료");
+        } else {
+          await interaction.reply("실패");
         }
-        await interaction.reply("처리 완료");
       } else {
         await interaction.reply({ content: "통방에 있어야 ㄱㄴ", ephemeral: true });
       }
@@ -38,23 +50,46 @@ export default {
       await interaction.reply(`${minutes}분만 ㄱㄷ`);
 
       const pid = new Date().getTime();
+      const startTime = new Date().toString();
+      const messageInfo = { startTime, minutes, displayName: interaction.member.displayName };
       client.data.killallRunningPid = pid;
 
-      await sleep(minutes * 60 * 1000);
+      await sleep((minutes - 1) * 60 * 1000);
 
-      let message = `(${interaction.member.displayName}:${interaction.toString()}) `;
+      // 1분전
+      if (pid == client.data.killallRunningPid) {
+        if (interaction.member.voice.channel) {
+          await interaction.channel.send(lateLog({ ...messageInfo, message: "1분 전" }));
+        } else {
+          await interaction.channel.send(
+            lateLog({
+              ...messageInfo,
+              message: "통방에 있어야 ㄱㄴ, 취소됨",
+            })
+          );
+          client.data.killallRunningPid = -1;
+          return;
+        }
+      }
+
+      await sleep(60 * 1000);
 
       // 취소아님
       if (pid == client.data.killallRunningPid) {
+        client.data.killallRunningPid = -1;
         if (interaction.member.voice.channel) {
           // 다 연결 끊기
-          for (const member of interaction.member.voice.channel.members.values()) {
-            await member.voice.disconnect();
+          if (await killall(interaction.member.voice.channel)) {
+            await interaction.channel.send(lateLog({ ...messageInfo, message: "처리 완료" }));
+          } else {
+            await interaction.channel.send(lateLog({ ...messageInfo, message: "실패" }));
           }
-          await interaction.channel.send(`${interaction.member.displayName} 늦게 처리 완료`);
         }
       }
-      client.data.killallRunningPid = -1;
+      // 취소됨
+      else {
+        await interaction.channel.send(lateLog({ ...messageInfo, message: "취소됨" }));
+      }
     }
 
     // 취소
