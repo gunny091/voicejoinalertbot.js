@@ -15,5 +15,7 @@ COPY package-lock.json .
 RUN [ "npm", "ci" ]
 
 COPY . .
+RUN chmod +x run.sh
 
-ENTRYPOINT [ "./run.sh" ]
+ENV PATH=/app:$PATH
+ENTRYPOINT [ "run.sh" ]

@@ -1,3 +1,3 @@
-#!/bin/bash
+#!/bin/sh
 node deployCommand.js  
 node index.js
